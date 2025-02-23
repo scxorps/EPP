@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Ajoutez cette ligne pour la permission INTERNET -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="safemeet"
         android:name="${applicationName}"

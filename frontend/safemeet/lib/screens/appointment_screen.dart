@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/appointment.dart';
-import '../services/api_service.dart';
-import '../widgets/appointment_card.dart';
+import 'package:safemeet/services/api_service.dart';
+
 
 class AppointmentScreen extends StatefulWidget {
   @override
@@ -9,33 +8,40 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  late Future<List<Appointment>> futureAppointments;
+  final ApiService _apiService = ApiService();
+  List<dynamic> _appointments = [];
 
   @override
   void initState() {
     super.initState();
-    futureAppointments = ApiService().fetchAppointments('token');
+    _fetchAppointments();
+  }
+
+  Future<void> _fetchAppointments() async {
+    try {
+      final appointments = await _apiService.fetchAppointments();
+      setState(() {
+        _appointments = appointments;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur: $e')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Mes rendez-vous')),
-      body: FutureBuilder<List<Appointment>>(
-        future: futureAppointments,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erreur: ${snapshot.error}'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return AppointmentCard(appointment: snapshot.data![index]);
-              },
-            );
-          }
+      body: ListView.builder(
+        itemCount: _appointments.length,
+        itemBuilder: (context, index) {
+          final appointment = _appointments[index];
+          return ListTile(
+            title: Text(appointment['vaccine']['name']),
+            subtitle: Text('Date: ${appointment['date']} - Statut: ${appointment['status']}'),
+          );
         },
       ),
     );

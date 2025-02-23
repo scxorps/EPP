@@ -1,9 +1,13 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CitizenViewSet, VaccineViewSet, VaccinationAppointmentViewSet, VaccinationRecordViewSet
+
+router = DefaultRouter()
+router.register(r'citizens', CitizenViewSet)
+router.register(r'vaccines', VaccineViewSet)
+router.register(r'appointments', VaccinationAppointmentViewSet)
+router.register(r'records', VaccinationRecordViewSet)
 
 urlpatterns = [
-    path('users/', views.UserListCreateView.as_view(), name='user-list-create'),
-    path('vaccines/', views.VaccineListCreateView.as_view(), name='vaccine-list-create'),
-    path('appointments/', views.AppointmentListCreateView.as_view(), name='appointment-list-create'),
-    path('appointments/<int:pk>/', views.AppointmentDetailView.as_view(), name='appointment-detail'),
+    path('', include(router.urls)),
 ]

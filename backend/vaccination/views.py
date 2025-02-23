@@ -1,29 +1,19 @@
+from rest_framework import viewsets
+from .models import Citizen, Vaccine, VaccinationAppointment, VaccinationRecord
+from .serializers import CitizenSerializer, VaccineSerializer, VaccinationAppointmentSerializer, VaccinationRecordSerializer
 
-from rest_framework import generics, permissions
-from .models import User, Vaccine, Appointment
-from .serializers import UserSerializer, VaccineSerializer, AppointmentSerializer
+class CitizenViewSet(viewsets.ModelViewSet):
+    queryset = Citizen.objects.all()
+    serializer_class = CitizenSerializer
 
-# Vue pour lister et créer des utilisateurs
-class UserListCreateView(generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-# Vue pour lister et créer des vaccins
-class VaccineListCreateView(generics.ListCreateAPIView):
+class VaccineViewSet(viewsets.ModelViewSet):
     queryset = Vaccine.objects.all()
     serializer_class = VaccineSerializer
 
-# Vue pour lister et créer des rendez-vous
-class AppointmentListCreateView(generics.ListCreateAPIView):
-    queryset = Appointment.objects.all()
-    serializer_class = AppointmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class VaccinationAppointmentViewSet(viewsets.ModelViewSet):
+    queryset = VaccinationAppointment.objects.all()
+    serializer_class = VaccinationAppointmentSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(patient=self.request.user)
-
-# Vue pour récupérer, mettre à jour ou supprimer un rendez-vous
-class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Appointment.objects.all()
-    serializer_class = AppointmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class VaccinationRecordViewSet(viewsets.ModelViewSet):
+    queryset = VaccinationRecord.objects.all()
+    serializer_class = VaccinationRecordSerializer

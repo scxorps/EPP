@@ -1,23 +1,22 @@
 from rest_framework import serializers
-from .models import User, Vaccine, Appointment
+from .models import Citizen, Vaccine, VaccinationAppointment, VaccinationRecord
 
-# Sérialiseur pour l'utilisateur
-class UserSerializer(serializers.ModelSerializer):
+class CitizenSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'phone_number', 'is_patient']
+        model = Citizen
+        fields = '__all__'
 
-# Sérialiseur pour les vaccins
 class VaccineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vaccine
-        fields = ['id', 'name', 'description', 'doses_required', 'interval_between_doses']
+        fields = '__all__'
 
-# Sérialiseur pour les rendez-vous
-class AppointmentSerializer(serializers.ModelSerializer):
-    patient = UserSerializer(read_only=True)
-    vaccine = VaccineSerializer(read_only=True)
-
+class VaccinationAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Appointment
-        fields = ['id', 'patient', 'vaccine', 'date', 'status']
+        model = VaccinationAppointment
+        fields = '__all__'
+
+class VaccinationRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VaccinationRecord
+        fields = '__all__'

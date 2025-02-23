@@ -76,11 +76,22 @@ WSGI_APPLICATION = 'semep_vaccination_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import os
+from urllib.parse import urlparse
+
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgres://safemeet_user:safemeet_password@db:5432/safemeet')
+
+# Parse la chaîne de connexion
+db_info = urlparse(DATABASE_URL)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': db_info.path[1:],  # Supprime le '/' du début
+        'USER': db_info.username,
+        'PASSWORD': db_info.password,
+        'HOST': db_info.hostname,
+        'PORT': db_info.port,
     }
 }
 
@@ -139,6 +150,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+# AUTH_USER_MODEL = 'vaccination.User'
 
 # Autorisez toutes les origines
 # CORS_ALLOW_ALL_ORIGINS = True

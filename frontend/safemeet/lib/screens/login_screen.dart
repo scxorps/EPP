@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
+import 'package:safemeet/screens/register_screen.dart';
+import 'package:safemeet/services/api_service.dart';
 import 'home_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final ApiService _apiService = ApiService();
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await _apiService.login(_usernameController.text, _passwordController.text);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +42,11 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                controller: _usernameController,
+                decoration: InputDecoration(labelText: 'Nom d\'utilisateur'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre email';
+                    return 'Veuillez entrer votre nom d\'utilisateur';
                   }
                   return null;
                 },
@@ -40,15 +64,7 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Simuler une connexion réussie
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
-                  }
-                },
+                onPressed: _login,
                 child: Text('Se connecter'),
               ),
               TextButton(

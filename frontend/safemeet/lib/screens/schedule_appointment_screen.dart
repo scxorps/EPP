@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import 'package:safemeet/services/api_service.dart';
 
-class ScheduleAppointmentScreen extends StatelessWidget {
+
+class ScheduleAppointmentScreen extends StatefulWidget {
+  @override
+  _ScheduleAppointmentScreenState createState() => _ScheduleAppointmentScreenState();
+}
+
+class _ScheduleAppointmentScreenState extends State<ScheduleAppointmentScreen> {
+  final ApiService _apiService = ApiService();
   final _formKey = GlobalKey<FormState>();
   final _vaccineController = TextEditingController();
   final _dateController = TextEditingController();
+
+  Future<void> _scheduleAppointment() async {
+    if (_formKey.currentState!.validate()) {
+      final appointmentData = {
+        'vaccine': _vaccineController.text,
+        'date': _dateController.text,
+      };
+
+      try {
+        await _apiService.createAppointment(appointmentData);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Rendez-vous pris avec succès !')),
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +66,7 @@ class ScheduleAppointmentScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    ApiService().scheduleAppointment(
-                      {
-                        'vaccine': _vaccineController.text,
-                        'date': _dateController.text,
-                      },
-                      'token',
-                    );
-                    Navigator.pop(context);
-                  }
-                },
+                onPressed: _scheduleAppointment,
                 child: Text('Confirmer'),
               ),
             ],

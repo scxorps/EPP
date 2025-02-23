@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:safemeet/screens/home_screen.dart';
+import 'package:safemeet/screens/register_screen.dart';
 import 'screens/login_screen.dart';
 
 void main() {
@@ -15,6 +17,11 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginScreen(),
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
+        '/home': (context) => HomeScreen(),
+      },
       debugShowCheckedModeBanner: false,
     );
   }
